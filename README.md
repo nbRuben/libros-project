@@ -1,9 +1,9 @@
-# Beeter
+# Libros
 
-Beeter is an educational project developed at course "Design of Services and Applications" of  Castelldefels School of Telecommunications and Aerospace Engineering (EETAC). Beeter is a very simple microblogging service with a web front-end developed with Bootstrap and jQuery, and an android front-end.
+Libros is an application to manage books.
 
 ## System requirements
-To install Beeter you must have installed:
+To install Libros you must have installed:
 
 - JDK 7.0
 - Maven
@@ -17,5 +17,5 @@ Clone this project and follow the instructions of each one of the individual sub
 
 - sql
 - www
-- beeter-server
-- beeter-android
+- libros-server
+- libros-android
