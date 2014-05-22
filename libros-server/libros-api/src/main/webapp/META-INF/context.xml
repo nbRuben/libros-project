@@ -11,7 +11,7 @@
 		url="jdbc:mysql://localhost:3306/realmlibrosdb?autoReconnect=true" />
 
 	<Realm className="org.apache.catalina.realm.DataSourceRealm"
-		dataSourceName="jdbc/realmdb" localDataSource="true" digest="MD5"
+		dataSourceName="jdbc/realmlibrosdb" localDataSource="true" digest="MD5"
 		userTable="users" userNameCol="username" userCredCol="password"
 		userRoleTable="roles" roleNameCol="rol" />
 </Context>

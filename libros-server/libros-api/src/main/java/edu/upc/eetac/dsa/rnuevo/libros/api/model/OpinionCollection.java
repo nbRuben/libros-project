@@ -13,10 +13,10 @@ import org.glassfish.jersey.linking.InjectLinks;
 import edu.upc.eetac.dsa.rnuevo.libros.api.model.Opinion;
 import edu.upc.eetac.dsa.rnuevo.libros.api.MediaType;
 import edu.upc.eetac.dsa.rnuevo.libros.api.LibroResource;
+import edu.upc.eetac.dsa.rnuevo.libros.api.OpinionResource;
 
 
 public class OpinionCollection {
-	
 	private List<Link> links;
 	private List<Opinion> opiniones;
 	private long newestTimestamp;

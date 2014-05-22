@@ -30,11 +30,9 @@ import javax.ws.rs.core.Response;
 import javax.ws.rs.core.SecurityContext;
 
 import edu.upc.eetac.dsa.rnuevo.libros.api.MediaType;
-import edu.upc.eetac.dsa.rnuevo.libros.api.model.Libro;
 import edu.upc.eetac.dsa.rnuevo.libros.api.model.Opinion;
 import edu.upc.eetac.dsa.rnuevo.libros.api.model.OpinionCollection;
 import edu.upc.eetac.dsa.rnuevo.libros.api.DataSourceSPA;
-import edu.upc.eetac.dsa.rnuevo.libros.api.model.LibroCollection;
 
 @Path("/libros/{idLibro}/opiniones")
 public class OpinionResource {
@@ -120,7 +118,10 @@ public class OpinionResource {
 	@Consumes(MediaType.LIBROS_API_OPINION)
 	@Produces(MediaType.LIBROS_API_OPINION)
 	public Opinion createOpinion(Opinion opinion, @PathParam("idLibro") String idLibro) {
-		//validateLibro(libro);
+
+		if (!security.isUserInRole("registrado")) {
+			throw new ForbiddenException("No estas registrado, no puedes crear opiniones");
+			}
 		Connection conn = null;
 		try {
 			conn = ds.getConnection();
@@ -131,11 +132,10 @@ public class OpinionResource {
 
 		PreparedStatement stmt = null;
 		try {
-			String sql = buildInsertLibro();
+			String sql = buildInsertOpinion();
 			stmt = conn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS);
 
 			stmt.setString(1, opinion.getUsername());
-			// //FALLAN FECHASSSSSSSSSSSSSSSSSSSSSSSSSs
 			stmt.setDate(2, opinion.getFecha());
 			stmt.setString(3, opinion.getContenido());
 			stmt.setInt(4, Integer.valueOf(idLibro));
@@ -164,7 +164,7 @@ public class OpinionResource {
 		return opinion;
 	}
 
-	private String buildInsertLibro() {
+	private String buildInsertOpinion() {
 		return "INSERT INTO opinion(username, fecha, contenido, id_libro) VALUES(?, ?, ?, ?)";
 	}
 
@@ -220,7 +220,7 @@ public class OpinionResource {
 	@GET
 	@Path("/{idOpinion}")
 	@Produces(MediaType.LIBROS_API_OPINION)
-	public Response getLibro(@PathParam("idOpinion") String idOpinion,
+	public Response getOpinion(@PathParam("idOpinion") String idOpinion,
 			@Context Request request) {
 		// Create CacheControl
 		CacheControl cc = new CacheControl();
@@ -250,7 +250,9 @@ public class OpinionResource {
 	@DELETE
 	@Path("/{idOpinion}")
 	public void deleteLibro(@PathParam("idOpinion") String idOpinion) {
-		// ////FALTA AQUI VALIDAR USUARIO PARA QUE SOLO LO PUEDA BORRAR EL ADMIN
+		if (!security.isUserInRole("registrado")) {
+			throw new ForbiddenException("No estas registrado, no puedes borrar opiniones");
+			}
 		Connection conn = null;
 		try {
 			conn = ds.getConnection();
@@ -291,8 +293,8 @@ public class OpinionResource {
 	@Consumes(MediaType.LIBROS_API_OPINION)
 	@Produces(MediaType.LIBROS_API_OPINION)
 	public Opinion updateOpinion(@PathParam("idOpinion") String idOpinion, Opinion opinion, @PathParam("idLibro") String idLibro) {
-		// ////FALTA AQUI VALIDAR USUARIO PARA QUE SOLO LO PUEDA ACTUALIZAR EL
-		// ADMIN
+		System.out.println("hola");
+		System.out.println(security.getUserPrincipal());
 		Connection conn = null;
 		try {
 			conn = ds.getConnection();
@@ -300,13 +302,14 @@ public class OpinionResource {
 			throw new ServerErrorException("Could not connect to the database",
 					Response.Status.SERVICE_UNAVAILABLE);
 		}
-
+		if (!security.isUserInRole("registrado")) {
+			throw new ForbiddenException("No estas registrado, no puedes actualizar opiniones");
+			}
 		PreparedStatement stmt = null;
 		try {
 			String sql = buildUpdateOpinion();
 			stmt = conn.prepareStatement(sql);
 			stmt.setString(1, opinion.getUsername());
-			// //FALLAN FECHASSSSSSSSSSSSSSSSSSSSSSSSSs
 			stmt.setDate(2, opinion.getFecha());
 			stmt.setString(3, opinion.getContenido());
 			stmt.setInt(4, Integer.valueOf(idLibro));

@@ -278,8 +278,7 @@ public class LibroResource {
 			stmt.setString(2, libro.getAutor());
 			stmt.setString(3, libro.getIdioma());
 			stmt.setString(4, libro.getEdicion());
-			// //FALLAN FECHASSSSSSSSSSSSSSSSSSSSSSSSSs
-			stmt.setDate(5, (Date)libro.getFechaEdicion());
+			stmt.setDate(5,libro.getFechaEdicion());
 			stmt.setDate(6, libro.getFechaImpresion());
 			stmt.setString(7, libro.getEditorial());
 			stmt.executeUpdate();
@@ -314,7 +313,10 @@ public class LibroResource {
 	@DELETE
 	@Path("/{idLibro}")
 	public void deleteLibro(@PathParam("idLibro") String idLibro) {
-		// ////FALTA AQUI VALIDAR USUARIO PARA QUE SOLO LO PUEDA BORRAR EL ADMIN
+		System.out.println(security.getUserPrincipal().getName());
+		if (!security.getUserPrincipal().getName().equals("admin")) {
+			throw new ForbiddenException("No eres el Admin, no puedes borrar libros");
+			}
 		Connection conn = null;
 		try {
 			conn = ds.getConnection();
@@ -355,8 +357,10 @@ public class LibroResource {
 	@Consumes(MediaType.LIBROS_API_LIBRO)
 	@Produces(MediaType.LIBROS_API_LIBRO)
 	public Libro updateLibro(@PathParam("idLibro") String idLibro, Libro libro) {
-		// ////FALTA AQUI VALIDAR USUARIO PARA QUE SOLO LO PUEDA ACTUALIZAR EL
-		// ADMIN
+		System.out.println(security.getUserPrincipal());
+		if (!security.isUserInRole("administrador")) {
+			throw new ForbiddenException("No eres el Admin, no puedes actualizar libros");
+			}
 		Connection conn = null;
 		try {
 			conn = ds.getConnection();
@@ -373,7 +377,6 @@ public class LibroResource {
 			stmt.setString(2, libro.getAutor());
 			stmt.setString(3, libro.getIdioma());
 			stmt.setString(4, libro.getEdicion());
-			// //FALLAN FECHASSSSSSSSSSSSSSSSSSSSSSSSSs
 			stmt.setDate(5, libro.getFechaEdicion());
 			stmt.setDate(6, libro.getFechaImpresion());
 			stmt.setString(7, libro.getEditorial());
@@ -406,6 +409,10 @@ public class LibroResource {
 	}
 
 	private void validateLibro(Libro libro) {
+		System.out.println(security.getUserPrincipal().getName());
+		if (!security.getUserPrincipal().getName().equals("admin")) {
+			throw new ForbiddenException("No eres el Admin, no puedes añadir libros");
+			}
 		if (libro.getTitulo() == null)
 			throw new BadRequestException("Titulo no puede ser nulo.");
 		if (libro.getAutor() == null)
